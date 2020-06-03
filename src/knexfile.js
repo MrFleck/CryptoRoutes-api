@@ -1,5 +1,5 @@
 // Update with your config settings.
-const env = require('./.env');
+const env = require('./env-config.js');
 module.exports = {
   client: 'mysql',
   connection: {

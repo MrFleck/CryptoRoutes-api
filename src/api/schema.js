@@ -7,6 +7,7 @@ const typeDefs = `
         name: String!
         email: String!
         password: String!
+        accessToken: String!
     }
 
     type Query{
@@ -22,6 +23,8 @@ const typeDefs = `
 
     type Mutation {
         createUser(name: String!, email: String!, password: String!): User
+        
+        login(email: String!, password: String!): User
     }
 
 
