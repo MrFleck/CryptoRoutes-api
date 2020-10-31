@@ -7,7 +7,7 @@ const { addMiddleware } = require('graphql-add-middleware');
 
 addMiddleware(schema, 'Query.getUsers', async function (root, args, context, info, next) {
     const validou = token.getTokenFromHeaders(context)
-    if(!validou){
+    if (!validou) {
         return context.res.sendStatus(401)
     }
     const result = await next();
@@ -17,7 +17,17 @@ addMiddleware(schema, 'Query.getUsers', async function (root, args, context, inf
 
 addMiddleware(schema, 'Query.getUser', async function (root, args, context, info, next) {
     const validou = token.getTokenFromHeaders(context)
-    if(!validou){
+    if (!validou) {
+        return context.res.sendStatus(401)
+    }
+    const result = await next();
+
+    return result
+});
+
+addMiddleware(schema, 'Query.getAllCryptos', async function (root, args, context, info, next) {
+    const validou = token.getTokenFromHeaders(context)
+    if (!validou) {
         return context.res.sendStatus(401)
     }
     const result = await next();

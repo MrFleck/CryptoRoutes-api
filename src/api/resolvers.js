@@ -2,18 +2,27 @@ const db = require('../config/db')
 const bcrypt = require('bcrypt')
 const token = require('../Auth/Auth')
 const env = require('../env-config')
+const axios = require('axios')
 
 module.exports = {
     Query: {
         async getUser(_, { user_id }) {
-            
+
             return await db('tb_users').where({ user_id: user_id })
         },
 
         async getUsers() {
-            
+
             return await db('tb_users')
+        },
+
+        async getAllCryptos() {
+            axios.get('https://api.nomics.com/v1/currencies/ticker?key=6ddc22213a53b49c36b5f38de5af8726&ids=BTC,ETH,EOS,XPR,LTC,XLM&interval=1d&convert=BRL').then(resp => {
+                console.log("RESPOSTA DA NOMICS: " + resp.data);
+                return resp.data;
+            })
         }
+
     },
 
     Mutation: {
@@ -33,15 +42,15 @@ module.exports = {
                     password: hash
                 })
                 const id = result[0]
-                console.log('USUÁRIO',id)
+                console.log('USUÁRIO', id)
                 const resultado = await db('tb_users').where({ user_id: id }).first();
-                console.log('RESULTADO',resultado)
+                console.log('RESULTADO', resultado)
                 const user = resultado
                 user.accessToken = token.createToken(user);
                 console.log('MOSTRANDO USER QUANDO CHAMA A MUTATION DE CADASTRO: ', user)
 
                 // const accessToken = token({ userId: user.user_id }, env.SECRET, { expiresIn: '15min' })
-                
+
                 return user
 
             } else {
@@ -50,6 +59,7 @@ module.exports = {
         },
 
         async login(_, { email, password }) {
+            console.log("Login realizado...");
             const result = await db('tb_users').where({ email: email })
             const user = result[0]
             if (!user) {
